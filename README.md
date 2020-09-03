@@ -53,14 +53,18 @@ If you find that `reorder` takes a large amount of time and want to find which O
     * `-p` -op to include
 
     ```
-    **************************************************
-    excluded format that starts with: src_f32
-    only show the top 10 result in each group
-    **************************************************
-    ***** Only print first 20 lines in table *****
-                                                        total_time
+    **********************************************************************
+    Excluded format that starts with: src_f32
+    Only print the first 20 lines in each table 
+    For the second table, only calculate the top 10 result in each group
+    **********************************************************************
+    **********************************************************************
+    OP LEVEL
+                                                          total_time
     name                                                            
     AtenIpexCPUDefault::copy_                           11639.369703
+    AtenIpexCPUDev::dil_add                              5769.484902
+    AtenIpexCPUDev::dil_clone                            5228.928496
     AtenIpexCPUDefault::mul                              2043.746809
     AtenIpexCPUDefault::native_layer_norm                1684.674033
     AtenIpexCPUDefault::expand                            650.644742
@@ -68,33 +72,39 @@ If you find that `reorder` takes a large amount of time and want to find which O
     AtenIpexCPUDefault::sum                               339.461665
     AtenIpexCPUDefault::add_                              280.614487
     AtenIpexCPUDefault::native_layer_norm_backward        123.052239
+    AtenIpexCPUDev::dil_add_                               23.995848
     AtenIpexCPUDefault::norAtenIpexCPUDefault::nati...      0.800782
     AtenIpexCPUDefault:AtenIpexCPUDefault::native_l...      0.513184
     AtenIpexCPUDefault:AtenIpexCPUDefault::add_             0.309082
 
-    ***** Only print first 20 lines in table *****
-                                                time    total_time
+    **********************************************************************
+    OP AND SHAPE LEVEL
+                                                 time    total_time
     name                      shape                               
-    AtenIpexCPUDefault::copy_ 5016x42720  575.986200  11639.369703
-                              5120x42720  562.807000  11639.369703
-                              5040x42720  521.028200  11639.369703
-                              4992x42720  294.528500  11639.369703
-                              4896x42720  289.565400  11639.369703
-                              4752x42720  281.221200  11639.369703
-                              5096x42720  225.600800  11639.369703
-                              5032x42720  222.723300  11639.369703
-                              4928x42720  218.197400  11639.369703
-                              5120x1024   171.200931  11639.369703
-    AtenIpexCPUDefault::mul   5120x1024    49.610103   2043.746809
-                              33x2432x64   48.380130   2043.746809
-                              5040x1024    44.238524   2043.746809
-                              21x3840x64   42.923827   2043.746809
-                              37x2176x64   42.661621   2043.746809
-                              46x1664x64   39.604003   2043.746809
-                              40x2048x64   39.142090   2043.746809
-                              4992x1024    38.011959   2043.746809
-                              42x1920x64   36.992190   2043.746809
-                              54x1408x64   35.770019   2043.746809
+    AtenIpexCPUDefault::copy_ 5016x42720   575.986200  11639.369703
+                              5120x42720   562.807000  11639.369703
+                              5040x42720   521.028200  11639.369703
+                              4992x42720   294.528500  11639.369703
+                              4896x42720   289.565400  11639.369703
+                              4752x42720   281.221200  11639.369703
+                              5096x42720   225.600800  11639.369703
+                              5032x42720   222.723300  11639.369703
+                              4928x42720   218.197400  11639.369703
+                              5120x1024    171.200931  11639.369703
+    AtenIpexCPUDev::dil_add   33x152x1024  169.870116   5769.484902
+                              21x240x1024  167.378663   5769.484902
+                              37x136x1024  163.849359   5769.484902
+                              46x104x1024  147.166015   5769.484902
+                              40x128x1024  129.089355   5769.484902
+                              42x120x1024  127.587648   5769.484902
+                              52x96x1024   120.069583   5769.484902
+                              36x136x1024  118.395012   5769.484902
+                              54x88x1024   116.925056   5769.484902
+                              47x104x1024  106.165281   5769.484902
+    **********************************************************************
+    Result has been saved at: 
+    ../transformer/log/op_level.csv
+    ../transformer/log/op_shape_level.csv
     ```
     The complete result will be saved at:
     `directory:to/save/output/op_level.csv` and `directory:to/save/output/op_shape_level.csv`
