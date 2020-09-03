@@ -6,6 +6,13 @@ import pandas as pd
 
 header = ["dnnl_verbose", "action", "eng", "name", "impl", "prop", "format", "blank1", "blank2", "shape", "time"]
 
+# TODO add all the following prefix to op_prefix_list
+aten_ipex_prefix = ["AtenIpexCPUDefault", "AtenIpexCPUDev", "AtenIpexJITDev", "AtenIpexCPUSparse"]
+custom_ops_prefix = ["IPEX"]
+extend_ops_prefix = ["packed_add_", "_interaction", "_embedding_bag"]
+mlp_ops_prefix = ["ipex_mm"]
+
+op_prefix_list = aten_ipex_prefix
 
 def group_and_sort(df, group_by, top_k, first_line, format_to_exclude, output_dir):
     if len(df) == 0:
@@ -82,7 +89,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", "--file_name", default=None, type=str, required=True, help="path to the input onednn log file")
     parser.add_argument("-o", "--output_dir", default=None, type=str, help="directory to save the output csv file")
     parser.add_argument("-g", "--group_by", nargs='+', choices=header, required=True, help="column names to groupby to calculate the total time")
-    parser.add_argument("-p", "--op_to_include", nargs='+', choices=["AtenIpexCPUDefault", "AtenIpexCPUDev"], default="AtenIpexCPUDefault", required=True, help="OP to include")
+    parser.add_argument("-p", "--op_to_include", nargs='+', choices=op_prefix_list, default="AtenIpexCPUDefault", required=True, help="OP to include")
     parser.add_argument("-e", "--exclude", nargs='+', help="format starts with the given strings will be excluded")
     parser.add_argument("-t", "--top_k", type=int, default=-1, help="only show the top k result within each group, if -1, show all the result")
     parser.add_argument("-l", "--first_line", type=int, default=-1, help="only print the first several lines in each table")
