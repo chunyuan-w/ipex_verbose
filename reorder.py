@@ -18,25 +18,29 @@ def group_and_sort(df, group_by, top_k, first_line, format_to_exclude, output_di
     if format_to_exclude:
         df = df[~df["format"].str.startswith(tuple(format_to_exclude))]
     
-    print("*" * 50)
+    print("*" * 70)
     if format_to_exclude:
-        print("excluded format that starts with: %s" % (", ".join(format_to_exclude)))
+        print("Excluded format that starts with: %s" % (", ".join(format_to_exclude)))
+    if first_line != -1:
+        print("Only print the first %d lines in each table " % first_line)
     if top_k != -1:
-        print("only show the top %d result in each group" % top_k)
-    print("*" * 50)
+        print("For the second table, only calculate the top %d result in each group" % top_k)
+    print("*" * 70)
     
     # op level time
-    # df_groupby_name = df.groupby(group_by).sum().sort_values(by="time", ascending=False).reset_index()
+    print("*" * 70)
+    print("OP LEVEL")
     df_groupby_name = df.groupby(group_by).sum().sort_values(by="time", ascending=False)
     df_groupby_name = df_groupby_name.rename(columns={"time": "total_time"})
     if first_line != -1:
-        print("*" * 5 + " Only print first %d lines in table " % first_line + "*" * 5)
         print(df_groupby_name.head(first_line))
     else:
         print(df_groupby_name)
     print()
 
     # op and shape level time
+    print("*" * 70)
+    print("OP AND SHAPE LEVEL")
     pt = pd.pivot_table(df, index=["name", "shape"], values="time", aggfunc="sum")
     pt["total_time"] = pt.groupby(level=["name"]).transform("sum").loc[:, "time"]
     # TODO top_k == -1
@@ -45,7 +49,6 @@ def group_and_sort(df, group_by, top_k, first_line, format_to_exclude, output_di
     else:
         pt = pt.sort_values(["total_time", "time"], ascending=[False, False]).groupby("name").head(top_k)
     if first_line != -1:
-        print("*" * 5 + " Only print first %d lines in table " % first_line + "*" * 5)
         print(pt.head(first_line))
     else:
         print(pt)
@@ -53,6 +56,10 @@ def group_and_sort(df, group_by, top_k, first_line, format_to_exclude, output_di
     if output_dir:
         df_groupby_name.to_csv(os.path.join(output_dir, "op_level.csv"), index=False)
         pt.to_csv(os.path.join(output_dir, "op_shape_level.csv"))
+        print("*" * 70)
+        print("Result has been saved at: ")
+        print(str(os.path.join(output_dir, "op_level.csv")))
+        print(str(os.path.join(output_dir, "op_shape_level.csv")))
 
 
 def preprocess(file, op_to_include):
