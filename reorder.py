@@ -61,7 +61,7 @@ def group_and_sort(df, group_by, top_k, first_line, format_to_exclude, output_di
         print(pt)
 
     if output_dir:
-        df_groupby_name.to_csv(os.path.join(output_dir, "op_level.csv"), index=False)
+        df_groupby_name.to_csv(os.path.join(output_dir, "op_level.csv"))
         pt.to_csv(os.path.join(output_dir, "op_shape_level.csv"))
         print("*" * 70)
         print("Result has been saved at: ")
