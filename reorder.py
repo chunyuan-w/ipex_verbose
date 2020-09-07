@@ -79,7 +79,11 @@ def preprocess(file, op_to_include):
         if line.startswith("dnnl_verbose") and len(line.split(',')) == 11:
             if line.split(',')[3] == "reorder":
                 if content[i-1].startswith(tuple(op_to_include)):
-                    reorders.append(line.replace("reorder", content[i-1]).split(","))
+                    reorder = line.replace("reorder", content[i-1]).split(",")
+
+                    assert len(reorder) == 11, "Please check the verbose format of:\nOP that leads to the reorder: %s\nThe reorder verbose: %s" % (content[i-1], line)
+                    
+                    reorders.append(reorder)
     df = pd.DataFrame(reorders, columns=header)
     return df
 
