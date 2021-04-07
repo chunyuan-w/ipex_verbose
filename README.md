@@ -5,13 +5,13 @@ If you find that `reorder` takes a large amount of time and want to find which O
 
 1. install pandas.
 
-    ```
+    ```bash
     pip install -r requirements.txt
     ```
 
-1. set the `_DEBUG` flag in `DevOPs.cpp` by 
-    ```
-    #define _DEBUG
+1. Build IPEX using: 
+    ```bash
+    IPEX_DISP_OP=1 python setup.py develop
     ```
 
 1. dump the verbose output into a file for example named `output.log` by enabling `MKLDNN_VERBOSE=1`.
