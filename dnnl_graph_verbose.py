@@ -3,41 +3,48 @@ import os
 
 import pandas as pd
 
+dict_type = {
+    "dnnl": {
+        "name": "dnnl_verbose",
+        "len": 11,
+        "header": ["dnnl_verbose", "action", "eng", "name", "impl", "prop", "format", "blank1", "blank2", "shape", "time"]
+    },
+    "graph": {
+        "name": "dnnl_graph_verbose",
+        "len": 9,
+        "header": ["dnnl_verbose", "name", "eng", "impl", "op", "data", "format", "backend", "time"]
+    }
+}
 
-header = ["dnnl_verbose", "action", "eng", "name", "impl", "prop", "format", "blank1", "blank2", "shape", "time"]
 
-def preprocess(file):
+def preprocess(file, verbose_type):
     with open(file) as f:
         content = f.read().splitlines()
     reorders = []
     for i, line in enumerate(content):
-        if line.startswith(("dnnl_graph_verbose", "dnnl_verbose")) and len(line.split(',')) == 11:
-            reorder = line.replace("reorder", content[i-1]).split(",")
-            assert len(reorder) == 11, "Please check the verbose format of:\nOP that leads to the reorder: %s\nThe reorder verbose: %s" % (content[i-1], line)
+        if line.startswith(dict_type[verbose_type]["name"]) and len(line.split(',')) == dict_type[verbose_type]["len"]:
+        # if line.startswith(("dnnl_graph_verbose", "dnnl_verbose")) and len(line.split(',')) == 11:
+            reorder = line.split(",")
+            # assert len(reorder) == 11, "Please check the verbose format of:\nOP that leads to the reorder: %s\nThe reorder verbose: %s" % (content[i-1], line)
             reorders.append(reorder)
-    df = pd.DataFrame(reorders, columns=header)
+    df = pd.DataFrame(reorders, columns=dict_type[verbose_type]["header"])
     return df
 
 
-def main(file_name):
-    df = preprocess(file_name)
+def main(file_name, verbose_type):
+    df = preprocess(file_name, verbose_type)
     df["time"] = df["time"].astype(float)
     df_groupby_name = df.groupby("name").sum().sort_values(by="time", ascending=False)
 
 
     print(df_groupby_name)
-    # pt = pd.pivot_table(df, index=["name"], values="time", aggfunc="sum")
-    
-    # print(pt)
-    
-    # pt["total_time"] = pt.groupby(level=["name"]).transform("sum").loc[:, "time"]
-    # print(pt)
-    # df.to_csv(file_name + ".csv")
+    # df_groupby_name.to_csv(file_name + ".csv")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file_name", default=None, type=str, required=True, help="path to the input onednn log file")
+    parser.add_argument("-t", "--verbose_type", default="dnnl", type=str, choices=["dnnl", "graph"] ,required=True, help="dnnl or graph verbose")
     args = parser.parse_args()
 
-    df = main(args.file_name)
+    df = main(args.file_name, args.verbose_type)
