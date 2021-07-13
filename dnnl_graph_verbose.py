@@ -51,8 +51,9 @@ def main(file_name, verbose_type, delimiter):
     # df_groupby_name = df.groupby("name").sum().sort_values(by="time", ascending=False)
 
 
-    df_groupby_name = df.groupby('name')['time'].agg(['sum','count'])
+    df_groupby_name = df.groupby('name')['time'].agg(['sum','count', 'mean'])
 
+    df_groupby_name = df_groupby_name.rename(columns={'sum': 'sum (ms)', 'mean': 'mean (ms)'})
     print(df_groupby_name)
     # df_groupby_name.to_csv(file_name + ".csv")
 
